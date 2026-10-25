@@ -54,7 +54,6 @@ h1{font-size:1.15rem;margin:0 0 4px}
 .opts span{display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:.9rem}
 .opts input:checked + span{background:var(--yellow);color:#14213D;border-color:var(--yellow);font-weight:600}
 .opts input:focus-visible + span{outline:2px solid var(--green);outline-offset:2px}
-textarea{width:100%;min-height:70px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);padding:10px;font:inherit}
 .send{width:100%;padding:14px;border:0;border-radius:14px;background:var(--yellow);color:#14213D;font:700 1.05rem "Poppins",system-ui,sans-serif;cursor:pointer}
 .msg{margin:10px 0 0;min-height:1.2em;text-align:center;font-weight:600}
 .msg.ok{color:var(--green)} .msg.err{color:var(--red)}
@@ -69,7 +68,6 @@ textarea{width:100%;min-height:70px;border-radius:12px;border:1px solid var(--li
 .row .top{display:flex;justify-content:space-between;gap:8px;font-size:.88rem;margin-bottom:3px}
 .bar{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
 .bar i{display:block;height:100%;border-radius:99px;transition:width .4s}
-.coms{margin:0;padding-left:18px;color:var(--muted);font-size:.9rem}
 .hidden{display:none}
 </style>
 </head>
@@ -143,7 +141,7 @@ const falsas = Array.from({length:15}, () => {
   return o;
 });
 
-// 3) RESPUESTAS REALES (las que se envían desde la encuesta)
+// 3) RESPUESTAS ENVIADAS DESDE LA ENCUESTA (se guardan en el navegador)
 let reales = [];
 try { reales = JSON.parse(localStorage.getItem("reales_rodar") || "[]"); } catch(e) { reales = []; }
 
@@ -188,11 +186,13 @@ function render(){
   const n = todas.length;
   const si = todas.filter(r => r.compraria === "Sí").length;
   const media = (todas.reduce((s,r)=>s+Number(r.interes),0)/n).toFixed(1);
+  const cuenta = {}; todas.forEach(r => cuenta[r.beneficio] = (cuenta[r.beneficio]||0) + 1);
+  const top = Object.entries(cuenta).sort((a,b) => b[1]-a[1])[0][0];
   document.getElementById("kpis").innerHTML = `
     <div class="kpi"><b>${n}</b><small>respuestas</small></div>
     <div class="kpi"><b>${Math.round(si/n*100)}%</b><small>descargarían Rodar</small></div>
     <div class="kpi"><b>${media}/5</b><small>interés promedio</small></div>
-    <div class="kpi"><b>${reales.length}</b><small>respuestas reales</small></div>`;
+    <div class="kpi"><b style="font-size:1.05rem;line-height:1.9">${top}</b><small>beneficio más elegido</small></div>`;
   document.getElementById("charts").innerHTML = PREGUNTAS.map((p,i) => {
     const filas = p.opciones.map(([v]) => {
       const c = todas.filter(r => r[p.id] === v).length;
