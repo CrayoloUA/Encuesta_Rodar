@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Encuesta Rodar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<style>
+:root{
+  --navy:#14213D; --yellow:#FFC300; --green:#2BB673; --red:#E63946;
+  --bg:#eef1f7; --card:#ffffff; --text:#14213D; --muted:#5b6784; --line:#d9dfec; --soft:#e4e9f4;
+  --tab-on-bg:#14213D; --tab-on-fg:#FFC300;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c1325; --card:#14213D; --text:#f2f5fb; --muted:#9aa8c7; --line:#27375f; --soft:#1e2e55;
+    --tab-on-bg:#FFC300; --tab-on-fg:#14213D;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1325; --card:#14213D; --text:#f2f5fb; --muted:#9aa8c7; --line:#27375f; --soft:#1e2e55;
+  --tab-on-bg:#FFC300; --tab-on-fg:#14213D;
+}
+html{color-scheme:light dark;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+main{max-width:640px;margin:0 auto;padding:16px 16px 40px}
+
+.hero{background:var(--navy);color:#fff;border-radius:18px;padding:18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;border:1px solid var(--line)}
+.hero svg{flex:none;width:64px;height:64px}
+.logo{font-weight:700;font-size:2rem;line-height:1;letter-spacing:-.5px}
+.logo i{font-style:normal;color:var(--green)}
+.slogan{margin:6px 0 0;color:var(--yellow);font-size:.9rem;font-weight:600}
+
+h1{font-size:1.15rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 14px;font-size:.9rem}
+
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font:600 .95rem "Poppins",system-ui,sans-serif;cursor:pointer}
+.tabs button.on{background:var(--tab-on-bg);color:var(--tab-on-fg);border-color:var(--tab-on-bg)}
+
+.progress{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin:0 0 4px}
+.progress i{display:block;height:100%;width:0;background:var(--green);transition:width .3s}
+.pcount{font-size:.8rem;color:var(--muted);margin:0 0 12px;text-align:right}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.card.falta{border-color:var(--red);box-shadow:0 0 0 2px rgba(230,57,70,.25)}
+.q{font-weight:600;margin:0 0 10px;font-size:.98rem}
+.q small{color:var(--muted);font-weight:400}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts label{cursor:pointer}
+.opts input{position:absolute;opacity:0;pointer-events:none}
+.opts span{display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:.9rem}
+.opts input:checked + span{background:var(--yellow);color:#14213D;border-color:var(--yellow);font-weight:600}
+.opts input:focus-visible + span{outline:2px solid var(--green);outline-offset:2px}
+textarea{width:100%;min-height:70px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);padding:10px;font:inherit}
+.send{width:100%;padding:14px;border:0;border-radius:14px;background:var(--yellow);color:#14213D;font:700 1.05rem "Poppins",system-ui,sans-serif;cursor:pointer}
+.msg{margin:10px 0 0;min-height:1.2em;text-align:center;font-weight:600}
+.msg.ok{color:var(--green)} .msg.err{color:var(--red)}
+
+.badge{display:inline-block;background:var(--yellow);color:#14213D;border-radius:999px;padding:3px 12px;font-size:.78rem;font-weight:600;margin-bottom:12px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.kpi b{display:block;font-size:1.7rem;line-height:1.2}
+.kpi:nth-child(1) b{color:var(--yellow)} .kpi:nth-child(2) b{color:var(--green)}
+.kpi small{color:var(--muted)}
+.row{margin:8px 0}
+.row .top{display:flex;justify-content:space-between;gap:8px;font-size:.88rem;margin-bottom:3px}
+.bar{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .4s}
+.coms{margin:0;padding-left:18px;color:var(--muted);font-size:.9rem}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <svg viewBox="0 0 64 64" role="img" aria-label="Velocímetro de Rodar">
+      <path d="M10 40 A22 22 0 0 1 21 20.95" fill="none" stroke="#E63946" stroke-width="8"/>
+      <path d="M21 20.95 A22 22 0 0 1 43 20.95" fill="none" stroke="#FFC300" stroke-width="8"/>
+      <path d="M43 20.95 A22 22 0 0 1 54 40" fill="none" stroke="#2BB673" stroke-width="8"/>
+      <line x1="32" y1="40" x2="45.9" y2="32" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="32" cy="40" r="3.5" fill="#fff"/>
+    </svg>
+    <div>
+      <div class="logo">rodar<i>.</i></div>
+      <p class="slogan">“Conduce seguro. Gana más.”</p>
+    </div>
+  </header>
+
+  <h1>Cuéntanos qué piensas de Rodar</h1>
+  <p class="sub">Encuesta de 10 preguntas para motociclistas de Cali. Toma 2 minutos.</p>
+
+  <div class="tabs" role="tablist">
+    <button id="tabE" class="on" onclick="show('e')">Encuesta</button>
+    <button id="tabR" onclick="show('r')">Resultados</button>
+  </div>
+
+  <section id="vistaE">
+    <div class="progress"><i id="pbar"></i></div>
+    <p class="pcount" id="pcount">0 de 10 respondidas</p>
+    <div id="form"></div>
+    <button class="send" onclick="enviar()">Enviar respuestas</button>
+    <p class="msg" id="msg"></p>
+  </section>
+
+  <section id="vistaR" class="hidden">
+    <span class="badge">Incluye datos de ejemplo</span>
+    <div class="kpis" id="kpis"></div>
+    <div id="charts"></div>
+  </section>
+</main>
+
+<script>
+const VERDE="var(--green)", AMARILLO="var(--yellow)", ROJO="var(--red)";
+
+// 1) PREGUNTAS: edita texto y opciones. El número es el peso para generar los datos falsos.
+const PREGUNTAS = [
+  {id:"uso", texto:"¿Con qué frecuencia usas la moto en Cali?", opciones:[["Todos los días",55],["Varias veces por semana",30],["Ocasionalmente",15]]},
+  {id:"tipo", texto:"¿Usas la moto de forma particular o para trabajar?", opciones:[["Particular",50],["Reparto o mensajería",35],["Ambas",15]]},
+  {id:"accidente", texto:"¿Has tenido un accidente o un susto grave en moto en el último año?", opciones:[["Sí, un accidente",15],["Un susto, sin accidente",40],["Ninguno",45]]},
+  {id:"compraria", texto:"¿Descargarías Rodar en tu celular?", opciones:[["Sí",62],["Tal vez",25],["No",13]], colores:{"Sí":VERDE,"Tal vez":AMARILLO,"No":ROJO}},
+  {id:"interes", texto:"¿Qué tanto te interesa ganar puntos por conducir seguro?", nota:"1 = nada, 5 = mucho", opciones:[["1",5],["2",10],["3",20],["4",35],["5",30]], colores:{"1":ROJO,"2":ROJO,"3":AMARILLO,"4":VERDE,"5":VERDE}},
+  {id:"beneficio", texto:"¿Qué beneficio te interesaría más canjear?", opciones:[["Descuento en seguro",35],["Mantenimiento de la moto",30],["Cascos y chalecos",20],["Combustible",15]]},
+  {id:"datos", texto:"¿Permitirías que la app use el GPS y los sensores del celular?", opciones:[["Sí",50],["Solo si mis datos están protegidos",40],["No",10]]},
+  {id:"celular", texto:"¿Cómo llevas el celular cuando manejas?", opciones:[["En soporte del manubrio",40],["En el bolsillo",45],["En el morral",15]]},
+  {id:"empresa", texto:"¿Dejarías que tu empresa de domicilios vea tu puntaje a cambio de bonificaciones?", opciones:[["Sí",40],["Solo si es voluntario",40],["No",20]]},
+  {id:"motivacion", texto:"¿Qué te motivaría más a conducir con más cuidado?", opciones:[["Ahorrar plata",40],["Evitar accidentes",30],["Bonificación del trabajo",20],["Competir con amigos",10]]}
+];
+
+// 2) DATOS FALSOS (con semilla: siempre salen los mismos)
+let seed = 42;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+function pick(ops){
+  const total = ops.reduce((s,o)=>s+o[1],0); let r = rnd()*total, acc = 0;
+  for (const [v,w] of ops){ acc += w; if (acc >= r) return v; }
+  return ops[0][0];
+}
+const falsas = Array.from({length:15}, () => {
+  const o = {falsa:true};
+  PREGUNTAS.forEach(p => o[p.id] = pick(p.opciones));
+  return o;
+});
+
+// 3) RESPUESTAS REALES (las que se envían desde la encuesta)
+let reales = [];
+try { reales = JSON.parse(localStorage.getItem("reales_rodar") || "[]"); } catch(e) { reales = []; }
+
+// 4) FORMULARIO
+const form = document.getElementById("form");
+form.innerHTML = PREGUNTAS.map((p,i) => `
+  <div class="card" id="q-${p.id}"><p class="q">${i+1}. ${p.texto}${p.nota ? ` <small>(${p.nota})</small>` : ""}</p>
+  <div class="opts">${p.opciones.map(([v]) =>
+    `<label><input type="radio" name="${p.id}" value="${v}"><span>${v}</span></label>`).join("")}
+  </div></div>`).join("");
+
+function progreso(){
+  const n = PREGUNTAS.filter(p => document.querySelector(`input[name="${p.id}"]:checked`)).length;
+  document.getElementById("pbar").style.width = (n/PREGUNTAS.length*100) + "%";
+  document.getElementById("pcount").textContent = n + " de " + PREGUNTAS.length + " respondidas";
+}
+form.addEventListener("change", progreso);
+
+function enviar(){
+  const msg = document.getElementById("msg");
+  document.querySelectorAll(".card.falta").forEach(c => c.classList.remove("falta"));
+  const r = {falsa:false};
+  for (const p of PREGUNTAS){
+    const el = document.querySelector(`input[name="${p.id}"]:checked`);
+    if (!el){
+      const card = document.getElementById("q-" + p.id);
+      card.classList.add("falta"); card.scrollIntoView({behavior:"smooth", block:"center"});
+      msg.className = "msg err"; msg.textContent = "Te falta responder una pregunta."; return;
+    }
+    r[p.id] = el.value;
+  }
+  reales.push(r);
+  try { localStorage.setItem("reales_rodar", JSON.stringify(reales)); } catch(e) {}
+  msg.className = "msg ok"; msg.textContent = "¡Gracias! Tu respuesta quedó guardada.";
+  document.querySelectorAll("#form input:checked").forEach(i => i.checked = false);
+  progreso(); render();
+}
+
+// 5) RESULTADOS
+function render(){
+  const todas = [...falsas, ...reales];
+  const n = todas.length;
+  const si = todas.filter(r => r.compraria === "Sí").length;
+  const media = (todas.reduce((s,r)=>s+Number(r.interes),0)/n).toFixed(1);
+  document.getElementById("kpis").innerHTML = `
+    <div class="kpi"><b>${n}</b><small>respuestas</small></div>
+    <div class="kpi"><b>${Math.round(si/n*100)}%</b><small>descargarían Rodar</small></div>
+    <div class="kpi"><b>${media}/5</b><small>interés promedio</small></div>
+    <div class="kpi"><b>${reales.length}</b><small>respuestas reales</small></div>`;
+  document.getElementById("charts").innerHTML = PREGUNTAS.map((p,i) => {
+    const filas = p.opciones.map(([v]) => {
+      const c = todas.filter(r => r[p.id] === v).length;
+      const pct = Math.round(c/n*100);
+      const col = (p.colores && p.colores[v]) || VERDE;
+      return `<div class="row"><div class="top"><span>${v}</span><span>${pct}% (${c})</span></div>
+        <div class="bar"><i style="width:${pct}%;background:${col}"></i></div></div>`;
+    }).join("");
+    return `<div class="card"><p class="q">${i+1}. ${p.texto}</p>${filas}</div>`;
+  }).join("");
+}
+
+function show(v){
+  document.getElementById("vistaE").classList.toggle("hidden", v !== "e");
+  document.getElementById("vistaR").classList.toggle("hidden", v !== "r");
+  document.getElementById("tabE").classList.toggle("on", v === "e");
+  document.getElementById("tabR").classList.toggle("on", v === "r");
+  if (v === "r") render();
+}
+render();
+</script>
+</body>
+</html>
